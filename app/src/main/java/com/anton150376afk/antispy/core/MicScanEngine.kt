@@ -46,12 +46,11 @@ class MicScanEngine(private val context: Context) {
                 }
             }
 
-            // Метод 2: getActiveMicrophones (Android 12 / API 31+) — список микрофонов которые используются прямо сейчас. Для каждого active microphone определяется какой пакет его использует
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val activeMics = audioManager.activeMicrophones
-                if (activeMics.isNotEmpty()) {
-                    // Встроенный микрофон активен — кто-то пишет прямо сейчас.
+            // Метод 2: getActiveRecordingConfigurations (Android 7.0 / API 24+) — список активных записей аудио. Если есть активная запись — кто-то пишет прямо сейчас.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                val activeRecordings = audioManager.getActiveRecordingConfigurations()
+                if (activeRecordings.isNotEmpty()) {
+                    // Микрофон активен — кто-то пишет прямо сейчас.
                     // Добавляем все foreground процессы как потенциальные угрозы
                     for (procInfo in runningApps) {
                         if (procInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
@@ -127,11 +126,12 @@ class MicScanEngine(private val context: Context) {
                 val start = now - windowMs
 
                 // queryAndAggregateUsageStats возвращает Map<packageName, UsageStats> для всего периода.
-                // Нам нужен totalTimeInForegroundMs и eventCount (количество обращений к сенсору за период).
+                // UsageStats даёт getTotalTimeInForeground() — суммарное время в foreground.
+                // Счётчика запусков (eventCount) в aggregate API нет — ставим 0.
                 for ((pkgId, stats) in usageStats.queryAndAggregateUsageStats(start, now)) {
                     map[pkgId] = UsageSummary(
-                        usageCount = stats.eventCount ?: 0,
-                        foregroundMs = stats.totalTimeInForegroundMs ?: 0L
+                        usageCount = 0,
+                        foregroundMs = stats.totalTimeInForeground
                     )
                 }
             } catch (_: Throwable) {} // PermissionDenied если нет Usage Access

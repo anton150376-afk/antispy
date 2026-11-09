@@ -12,6 +12,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.anton150376afk.antispy.service.MicMonitoringService
 import com.anton150376afk.antispy.ui.dashboard.DashboardScreen
@@ -71,11 +72,13 @@ private fun AntiSpyAppRoot(viewModel: DashboardViewModel = hiltViewModel()) {
 /** Основной экран приложения (один экран, без навигации) */
 @Composable
 private fun AntiSpyAppScreen(viewModel: DashboardViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+
     // Открываем настройки защиты при клике
     val onSettingsClick: () -> Unit = {
         Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
             flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-        }.also { startActivity(it) }
+        }.also { context.startActivity(it) }
     }
 
     DashboardScreen(onSettingsClick = onSettingsClick, viewModel = viewModel)

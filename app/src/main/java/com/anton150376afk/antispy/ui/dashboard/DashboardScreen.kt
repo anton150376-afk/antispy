@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,6 +45,7 @@ import com.anton150376afk.antispy.core.RiskLevel
  * Главный экран дашборда AntiSpy.
  * Показывает активные прослушиватели микрофона и аудит за 24ч.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     onSettingsClick: () -> Unit = {},
@@ -227,7 +229,7 @@ private fun EmptyStateCard() {
 @Composable
 private fun SettingsCard(onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick).padding(top = 8.dp)
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(top = 8.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp).fillMaxWidth(),
