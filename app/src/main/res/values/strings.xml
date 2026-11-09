@@ -51,4 +51,17 @@
     <string name="risk_medium">Средний риск</string>
     <string name="risk_high">Высокий риск</string>
     <string name="risk_critical">Критическая угроза</string>
+
+    <!-- NotificationListenerService -->
+    <string name="nls_permission_needed">Разрешите доступ к уведомлениям для перехвата предупреждений о записии:</string>
+    <string name="nls_grant_permission_button">Дать разрешение на уведомления</string>
+    <string name="nls_permission_ok">Уведомления разрешены</string>
+
+    <!-- NotificationListenerService event messages -->
+    <string name="nls_event_unknown_package">Неизвестное приложение</string>
+    <string name="nls_events_24h_title">События мониторинга уведомлений</string>
+    <string name="nls_subtitle_app">%d приложений через NLS</string>
+
+    <!-- Error messages -->
+    <string name="error_permission_denied">Доступ запрещён — проверьте настройки разрешения</string>
 </resources>

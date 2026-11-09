@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -96,6 +97,11 @@ fun DashboardScreen(
             // Секция 2: аудит UsageStats за последние 24ч
             if (uiState.auditResults.isNotEmpty()) {
                 AuditRecordCard(viewModel = viewModel, auditResults = uiState.auditResults)
+            }
+
+            // Секция 3: события из NotificationListenerService
+            if (uiState.nlsEvents.isNotEmpty()) {
+                NlsEventsCard(events = uiState.nlsEvents)
             }
 
             // Пустое состояние
@@ -206,6 +212,53 @@ private fun AuditRecordCard(
         }
     }
 }
+
+// ============================================================
+// Секция событий из NotificationListenerService
+// ============================================================
+
+@Composable
+private fun NlsEventsCard(events: List<com.anton150376afk.antispy.service.AppNlsListener.RecordingNotification>) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp)) {
+            // Заголовок секции
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Filled.Notifications, null, tint = Color(0xFF2196F3), modifier = Modifier.size(20.dp))
+                Spacer(Modifier.size(8.dp))
+                Text(stringResource(R.string.nls_events_24h_title), style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(Modifier.size(8.dp))
+
+            events.forEachIndexed { index, event ->
+                val timeStr = formatNlsTime(event.timestamp)
+                AppListItem(
+                    name = event.appName.ifEmpty { stringResource(R.string.nls_event_unknown_package) },
+                    packageName = event.packageName,
+                    iconColor = Color(0xFF2196F3),
+                    subtitle = "$timeStr",
+                    isLastItem = index == events.lastIndex
+                )
+            }
+        }
+    }
+}
+
+/** Форматирование времени для NLS событий */
+private fun formatNlsTime(timestamp: Long): String {
+    val diff = System.currentTimeMillis() - timestamp
+    return when {
+        diff < 60_000L -> "только что"
+        diff < 3_600_000L -> "${diff / 60_000L} мин назад"
+        else -> "${diff / 3_600_000L} ч назад"
+    }
+}
+
+// ============================================================
+// Пустое состояние
+// ============================================================
 
 @Composable
 private fun EmptyStateCard() {

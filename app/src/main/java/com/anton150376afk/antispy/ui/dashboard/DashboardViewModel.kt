@@ -1,10 +1,13 @@
 package com.anton150376afk.antispy.ui.dashboard
 
 import android.content.Context
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anton150376afk.antispy.core.MicScanEngine
 import com.anton150376afk.antispy.core.RiskLevel
+import com.anton150376afk.antispy.service.AppNlsListener
+import com.anton150376afk.antispy.service.NlsEventLog
 import com.anton150376afk.antispy.service.UsageStatsAuditor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,6 +21,7 @@ import javax.inject.Inject
 data class DashboardUiState(
     val activeListeners: List<AppScanResult> = emptyList(),
     val auditResults: List<AuditEntry> = emptyList(),
+    val nlsEvents: List<AppNlsListener.RecordingNotification> = emptyList(),
     val isScanning: Boolean = false,
     val errorMessage: String? = null
 )
@@ -53,6 +57,9 @@ class DashboardViewModel @Inject constructor(
     // UsageStats auditor — аудит за 24ч (UsageStatsManager wrapper)
     private val usageAuditor = UsageStatsAuditor(ctx)
 
+    /** Проверка: подключён ли NotificationListenerService через NlsEventLog (сервис сам ставит флаг при onListenerConnected/onListenerDisconnected) */
+    fun isNlsEnabled(): Boolean = NlsEventLog.isEnabled
+
     /** Запустить полное сканирование всех источников */
     fun scanAll() {
         screenState.value = screenState.value.copy(isScanning = true, errorMessage = null)
@@ -65,7 +72,7 @@ class DashboardViewModel @Inject constructor(
                 // Шаг 2: аудит UsageStats за последние 24 ч
                 val auditRawList = usageAuditor.auditLastHours(24)
 
-                // Преобразуем AuditResult в AuditEntry с расчѐтом риска
+                // Преобразуем AuditResult в AuditEntry с расчётом риска
                 val auditEntries = auditRawList.mapNotNull { result ->
                     val pkg = result.packageInfo
                     if (pkg.totalForegroundMs < 1_000) return@mapNotNull null
@@ -93,6 +100,7 @@ class DashboardViewModel @Inject constructor(
                 screenState.value = DashboardUiState(
                     activeListeners = scanResults,
                     auditResults = auditEntries,
+                    nlsEvents = NlsEventLog.getRecentEvents(),
                     isScanning = false
                 )
             } catch (e: Throwable) {
