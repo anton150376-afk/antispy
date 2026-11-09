@@ -12,8 +12,29 @@
     <!-- Dashboard -->
     <string name="dashboard_scanning_title">Сканирование…</string>
     <string name="dashboard_scanning_desc">Проверяем активные приложения</string>
+    <string name="dashboard_scanning_active">Сканирование активных приложений…</string>
     <string name="dashboard_empty_title">Микрофон чист</string>
     <string name="dashboard_empty_desc">Активных прослушивателей не обнаружено</string>
+
+    <!-- App list -->
+    <string name="dashboard_active_listeners_title">Активные прослушиватели микрофона</string>
+    <string name="dashboard_audit_24h_title">Аудит за 24 часа</string>
+    <string name="dashboard_subtitle_sessions" formatted="false">%s сессий: %d</string>
+    <string name="dashboard_subtitle_foreground_time" formatted="false">Время в фоне: %s, запуска: %d</string>
+    <string name="settings_link_text">Настройки защиты</string>
+
+    <!-- MicMonitoringService clean state -->
+    <string name="antispy_notification_content_clean">Всё чисто</string>
+
+    <!-- Warning labels for notification context -->
+    <string name="dashboard_warning_title">Внимание</string>
+    <string name="dashboard_empty_state_secondary">Активных прослушателей не обнаружено</string>
+
+    <!-- Time labels for AppRiskInfo -->
+    <string name="time_now">прямо сейчас</string>
+    <string name="time_seconds_ago">%d сек назад</string>
+    <string name="time_minutes_ago">%d мин назад</string>
+    <string name="time_hours_ago">%d ч назад</string>
 
     <!-- Warning about usage stats permission -->
     <string name="usage_stats_permission_needed">Для полного аудита включите доступ к статистике в настройках:\nНастройки → Безопасность → Доступ к данным использования → AntiSpy → Разрешить</string>

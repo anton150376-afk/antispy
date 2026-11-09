@@ -73,8 +73,8 @@ class MicMonitoringService : Service() {
         )
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("AntiSpy - защита активна")
-            .setContentText("Мониторинг микрофона: ${lastScanResults.size} приложений")
+            .setContentTitle(getString(R.string.antispy_notification_title))
+            .setContentText(getString(R.string.antispy_notification_content_idle))
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(pendingIntent)
             .setOngoing(true) // Невозможно swipe-отменить
@@ -108,13 +108,13 @@ class MicMonitoringService : Service() {
         val highRiskCount = results.count { it.score >= 3L }
 
         val summaryText = if (highRiskCount > 0) {
-            "$highRiskCount приложений требуют внимания"
+            getString(R.string.antispy_notification_content_threats, highRiskCount)
         } else {
-            "Всё чисто"
+            getString(R.string.antispy_notification_content_clean)
         }
 
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("AntiSpy - защита активна")
+            .setContentTitle(getString(R.string.antispy_notification_title))
             .setContentText(summaryText)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setOngoing(true)

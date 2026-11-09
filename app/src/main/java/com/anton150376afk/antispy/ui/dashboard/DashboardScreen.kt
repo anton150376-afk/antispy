@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,10 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 import com.anton150376afk.antispy.core.RiskLevel
+import com.anton150376afk.antispy.R
 
 /**
  * Главный экран дашборда AntiSpy.
@@ -120,7 +123,7 @@ private fun ScanningCard() {
         ) {
             CircularProgressIndicator()
             Spacer(Modifier.size(16.dp))
-            Text("Сканирование активных приложений...")
+            Text(stringResource(R.string.dashboard_scanning_active))
         }
     }
 }
@@ -132,7 +135,7 @@ private fun ErrorCard(message: String) {
         colors = CardDefaults.cardColors(containerColor = Color(0xFFFFECB3))
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text("Внимание", style = MaterialTheme.typography.titleMedium, color = Color(0xFFE65100))
+            Text(stringResource(R.string.dashboard_warning_title), style = MaterialTheme.typography.titleMedium, color = Color(0xFFE65100))
             Spacer(Modifier.size(4.dp))
             Text(message, style = MaterialTheme.typography.bodyMedium)
         }
@@ -153,7 +156,7 @@ private fun ActiveListenersCard(
             ) {
                 Icon(Icons.Filled.Mic, null, tint = Color.Red, modifier = Modifier.size(20.dp))
                 Spacer(Modifier.size(8.dp))
-                Text("Активные прослушиватели микрофона", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.dashboard_active_listeners_title), style = MaterialTheme.typography.titleMedium)
             }
             Spacer(Modifier.size(8.dp))
 
@@ -186,7 +189,7 @@ private fun AuditRecordCard(
             ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                 Spacer(Modifier.size(8.dp))
-                Text("Аудит за 24 часа", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.dashboard_audit_24h_title), style = MaterialTheme.typography.titleMedium)
             }
             Spacer(Modifier.size(8.dp))
 
@@ -219,7 +222,7 @@ private fun EmptyStateCard() {
                 modifier = Modifier.size(64.dp)
             )
             Spacer(Modifier.size(16.dp))
-            Text("Микрофон чист", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.dashboard_empty_title), style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.size(8.dp))
             Text("Активных слушателей не обнаружено", style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
         }
@@ -236,7 +239,7 @@ private fun SettingsCard(onClick: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Настройки защиты")
+            Text(stringResource(R.string.settings_link_text))
             Icon(Icons.AutoMirrored.Filled.ArrowForward, "Перейти к настройкам", tint = MaterialTheme.colorScheme.primary)
         }
     }
@@ -278,7 +281,7 @@ private fun AppListItem(
 
         if (!isLastItem) {
             Spacer(Modifier.size(8.dp))
-            Divider()
+            HorizontalDivider()
         }
     }
 }
