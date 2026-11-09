@@ -22,7 +22,8 @@ import com.anton150376afk.antispy.core.MicScanEngine
  */
 class MicMonitoringService : Service() {
 
-    private val scanEngine = MicScanEngine(this)
+    // Инициализируем в onCreate() — при class-level инициализации контекст сервиса ещё не готов
+    private lateinit var scanEngine: MicScanEngine
 
     // Последние обнаруженные слушатели
     private var lastScanResults = listOf<AppRiskInfo>()
@@ -44,6 +45,7 @@ class MicMonitoringService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        scanEngine = MicScanEngine(this)
         // Создаём notification channel (Android 8+ required)
         createNotificationChannel(this)
 
