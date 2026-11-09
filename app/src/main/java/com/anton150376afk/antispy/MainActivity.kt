@@ -1,10 +1,13 @@
 package com.anton150376afk.antispy
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,8 +31,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Автозапуск мониторинга микрофона если ещё не запущен
-        startMicMonitoring()
+        // Запрашиваем POST_NOTIFICATIONS (разрешение на показ уведомлений) для Android 13+
+        val postNotifLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { granted ->
+            if (granted) startMicMonitoring()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                startMicMonitoring()
+            } else {
+                postNotifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            startMicMonitoring()
+        }
 
         setContent {
             AntiSpyTheme {
