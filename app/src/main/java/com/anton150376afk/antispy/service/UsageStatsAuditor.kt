@@ -92,6 +92,7 @@ class UsageStatsAuditor(private val context: Context) {
     }
 
     /** Маппинг типа события UsageStats в человеко-читаемые строки */
+    @Suppress("DEPRECATION")
     private fun mapEventType(type: Int): String {
         return when (type) {
             UsageEvents.Event.ACTIVITY_RESUMED -> "Запущено"

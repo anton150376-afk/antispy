@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
     }
 
     /** Проверка запущен ли наш foreground-сервис (по наличию уведомления) */
+    @Suppress("DEPRECATION")
     private fun isMyServiceRunning(): Boolean {
         val activityManager = getSystemService(ACTIVITY_SERVICE) as android.app.ActivityManager
         for (service in activityManager.getRunningServices(Int.MAX_VALUE)) {
