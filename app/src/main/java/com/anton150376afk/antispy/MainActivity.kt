@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import com.anton150376afk.antispy.service.MicMonitoringService
 import com.anton150376afk.antispy.ui.dashboard.DashboardScreen
 import com.anton150376afk.antispy.ui.dashboard.DashboardViewModel
@@ -25,6 +26,7 @@ import com.anton150376afk.antispy.ui.dashboard.DashboardViewModel
  * Главная активность приложения AntiSpy.
  * Запускает сканирование при старте и показывает Dashboard.
  */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,17 +37,27 @@ class MainActivity : ComponentActivity() {
         val postNotifLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { granted ->
-            if (granted) startMicMonitoring()
+            if (granted) requestAudioPermissionsAndStart()
+        }
+
+        // Запрашиваем RECORD_AUDIO (runtime permission на Android 10+)
+        val recordAudioLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { granted ->
+            if (granted) startMicMonitoring() else showError("Требуется разрешение RECORD AUDIO")
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Шаг 1: проверяем POST_NOTIFICATIONS
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                startMicMonitoring()
+                // POST_NOTIFICATIONS уже дан — переходим к RECORD_AUDIO
+                requestAudioPermissionsAndStart()
             } else {
                 postNotifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         } else {
-            startMicMonitoring()
+            // На Android 12-: сразу запрашиваем RECORD_AUDIO
+            requestAudioPermissionsAndStart()
         }
 
         setContent {
@@ -67,6 +79,25 @@ class MainActivity : ComponentActivity() {
             MicMonitoringService.startMonitoring(this)
         }
     }
+
+    /** Проверка наличия RECORD_AUDIO и запуск сервиса в случае успеха */
+    private fun requestAudioPermissionsAndStart() {
+        // CAPTURE_AUDIO_OUTPUT не запрашиваем — оно доступно только для privilegged-Apps.
+        // На Android 35+ система потребует RECORD_AUDIO как обязательное runtime permission
+        // для FOREGROUND_SERVICE_MICROPHONE на API 29+.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            when (checkSelfPermission(Manifest.permission.RECORD_AUDIO)) {
+                android.content.pm.PackageManager.PERMISSION_GRANTED -> startMicMonitoring()
+                else -> recordAudioLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            }
+        } else {
+            startMicMonitoring()
+        }
+    }
+
+    /** Показать ошибку при отказе от разрешения */
+    private fun showError(message: String) {
+        android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show()
 
     /** Проверка запущен ли наш foreground-сервис (по наличию уведомления) */
     @Suppress("DEPRECATION")
