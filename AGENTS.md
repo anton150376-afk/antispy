@@ -126,43 +126,22 @@ DashboardScreen
 - ✅ Ресурсы: тема, иконка, strings.xml, правила бэкапа.
 - ✅ Каждый data class в отдельном файле (стандарт бойлера).
 - ✅ Gradle wrapper настроен, проект собирается (`gradlew.bat assembleDebug`).
+- ✅ **NotificationListenerService** — `AppNlsListener.kt` перехватывает системные уведомления о записи аудио/видео.
+- ✅ **NlsEventLog.kt** — общий лог событий NLS ↔ ViewModel (singleton).
+- ✅ **NlsPermissionCard** — карточка направления на системные настройки NLS при `isNlsGranted=false`.
 
 ## 8. Известные проблемы и следующие задачи (делай по порядку)
 
-> Выполняй задачи СТРОГО по одной. После каждой — отчитайся, что сделал и что проверил.
+### Готовые задачи:
+1. ✅ Задача 1 — notification channel в MicMonitoringService (запушен)
+2. ✅ Задача 2 — запрос POST_NOTIFICATIONS в MainActivity (запушен)  
+3. ✅ Задача 3 — вынос строк в strings.xml + HorizontalDivider (запушен)
+4. ✅ Задача 4 — @Suppress on DEPRECATION (запушен, commit 68efa74)
+5. ✅ Задача 5a — NotificationListenerService (два коммита: NLS+формы+UI; PermissionCard+направление на системные settings)
 
-### Задача 1. Создать notification channel (КРИТИЧНО)
-**Проблема:** в `MicMonitoringService.kt` используется `NOTIFICATION_CHANNEL_ID = "antispy_mic_monitor"`, но сам канал нигде не создаётся через `NotificationManager.createNotificationChannel()`. На Android 8+ (minSdk 26) без канала уведомление НЕ покажется.
-**Что сделать:** в `MicMonitoringService.onCreate()` создать канал перед `startForeground()`. Имя и описание канала взять из `strings.xml` (ключи `antispy_notification_channel_name`, `antispy_notification_channel_desc` уже есть).
-**Как проверить:** запустить приложение на эмуляторе/устройстве — должно показаться постоянное уведомление «Защита активна».
+### Дальнейшие задачи:
 
-### Задача 2. Запросить POST_NOTIFICATIONS на Android 13+
-**Проблема:** `MainActivity` запускает ForegroundService, но не запрашивает runtime-разрешение `POST_NOTIFICATIONS` (нужно на Android 13+). Без него уведомление не покажется.
-**Что сделать:** в `MainActivity.onCreate()` перед запуском сервиса проверить и запросить `android.permission.POST_NOTIFICATIONS` (через `ActivityResultContracts.RequestPermission` или `requestPermissions`).
-**Как проверить:** на Android 13+ при первом запуске появится системный диалог разрешения.
-
-### Задача 3. Вынести хардкод-строки в strings.xml
-**Проблема:** часть строк захардкожена в коде, хотя в `strings.xml` уже есть готовые ключи.
-**Где именно:**
-- `DashboardScreen.kt`: «Сканирование активных приложений...», «Микрофон чист», «Активных прослушателей не обнаружено», «Настройки защиты», заголовки секций.
-- `MicMonitoringService.kt`: «AntiSpy - защита активна», «приложений требуют внимания», «Всё чисто».
-- `AppRiskInfo.kt`: «Критическая угроза», «Высокий риск» и т.д. (ключи `risk_safe`...`risk_critical` уже есть).
-**Что сделать:** заменить хардкод на `context.getString(R.string.xxx)` (в Composable — `stringResource(R.string.xxx)`).
-**Как проверить:** собрать проект, убедиться что строки отображаются корректно.
-
-### Задача 4. Убрать deprecated-предупреждения (МЕЛКАЯ)
-**Проблема:** при сборке выводятся 3 предупреждения. Это не ошибки, но лучше почистить:
-- `MainActivity.kt:57` — `getRunningServices()` помечен deprecated.
-- `UsageStatsAuditor.kt:100-101` — `MOVE_TO_FOREGROUND` / `MOVE_TO_BACKGROUND` deprecated.
-- `DashboardScreen.kt:281` — `Divider` переименован в `HorizontalDivider`.
-**Что сделать:** заменить `Divider()` → `HorizontalDivider()`. Остальные два можно оставить (нет простой альтернативы) либо подавить аннотацией `@Suppress("DEPRECATION")` — уточни у владельца.
-**Как проверить:** пересобрать — предупреждений должно стать меньше.
-
-### Задача 5. (дальше по роадмапу)
-Когда задачи 1–4 готовы, переходи к функциональным улучшениям из README, раздел «Roadmap»:
-- NotificationListenerService для перехвата уведомлений о записи;
-- мониторинг камеры через CameraManager;
-- экспорт отчётов (CSV/PDF).
+> Следующие задачи описаны в [README.md](./README.md#roadmap). Делай по порядку, одну за раз.
 
 ## 9. Как собирать и проверять проект
 
