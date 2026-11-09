@@ -33,7 +33,14 @@ class MainActivity : ComponentActivity() {
     private val recordAudioLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
-        if (granted) startMicMonitoring() else showError("Требуется разрешение RECORD AUDIO")
+        if (granted) requestForegroundServiceMicrophonePermission() else showError("Требуется разрешение RECORD AUDIO")
+    }
+
+    // Запрашаем FOREGROUND_SERVICE_MICROPHONE (Android 14+)
+    private val foregroundMicLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) startMicMonitoring() else showError("Требуется разрешение microphone foreground service")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,10 +94,23 @@ class MainActivity : ComponentActivity() {
         // для FOREGROUND_SERVICE_MICROPHONE на API 29+.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             when (checkSelfPermission(Manifest.permission.RECORD_AUDIO)) {
-                android.content.pm.PackageManager.PERMISSION_GRANTED -> startMicMonitoring()
+                android.content.pm.PackageManager.PERMISSION_GRANTED -> requestForegroundServiceMicrophonePermission()
                 else -> recordAudioLauncher.launch(Manifest.permission.RECORD_AUDIO)
             }
         } else {
+            startMicMonitoring()
+        }
+    }
+
+    /** Проверяет/запрашивает FOREGROUND_SERVICE_MICROPHONE (Android 14+, API 34+) */
+    private fun requestForegroundServiceMicrophonePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            when (checkSelfPermission(android.Manifest.permission.FOREGROUND_SERVICE_MICROPHONE)) {
+                android.content.pm.PackageManager.PERMISSION_GRANTED -> startMicMonitoring()
+                else -> foregroundMicLauncher.launch(android.Manifest.permission.FOREGROUND_SERVICE_MICROPHONE)
+            }
+        } else {
+            // На Android 13- FGS microphone не нужно отдельное разрешение
             startMicMonitoring()
         }
     }
