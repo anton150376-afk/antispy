@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Правила резервного копирования (Android 11 и ниже) -->
+<full-backup-content>
+    <!-- Исключаем локальную БД с историей сканирований из облачных бэкапов -->
+    <exclude
+        domain="database"
+        path="mic_history.db" />
+</full-backup-content>

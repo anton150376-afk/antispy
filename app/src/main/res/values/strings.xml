@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AntiSpy</string>
+
+    <!-- Foreground notification -->
+    <string name="antispy_notification_channel_name">Мониторинг микрофона</string>
+    <string name="antispy_notification_channel_desc">Показывает что AntiSpy защита активна и кто слушает микрофон</string>
+    <string name="antispy_notification_title">Защита активна</string>
+    <string name="antispy_notification_content_idle">Микрофон чист, угрозы не обнаружены</string>
+    <string name="antispy_notification_content_threats">%d приложений требуют внимания</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_scanning_title">Сканирование…</string>
+    <string name="dashboard_scanning_desc">Проверяем активные приложения</string>
+    <string name="dashboard_empty_title">Микрофон чист</string>
+    <string name="dashboard_empty_desc">Активных прослушивателей не обнаружено</string>
+
+    <!-- Warning about usage stats permission -->
+    <string name="usage_stats_permission_needed">Для полного аудита включите доступ к статистике в настройках:\nНастройки → Безопасность → Доступ к данным использования → AntiSpy → Разрешить</string>
+
+    <!-- Settings -->
+    <string name="settings_start_monitoring">Запустить мониторинг</string>
+    <string name="settings_stop_monitoring">Остановить мониторинг</string>
+    <string name="settings_scan_now">Сканировать сейчас</string>
+    <string name="settings_scan_interval">Интервал сканирования: %d сек</string>
+
+    <!-- Risk labels -->
+    <string name="risk_safe">Безопасно</string>
+    <string name="risk_low">Низкий риск</string>
+    <string name="risk_medium">Средний риск</string>
+    <string name="risk_high">Высокий риск</string>
+    <string name="risk_critical">Критическая угроза</string>
+</resources>

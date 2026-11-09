@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Правила извлечения данных (Android 12+) -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude
+            domain="database"
+            path="mic_history.db" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude
+            domain="database"
+            path="mic_history.db" />
+    </device-transfer>
+</data-extraction-rules>

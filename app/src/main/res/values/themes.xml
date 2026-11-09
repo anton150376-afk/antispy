@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Базовая тема приложения. UI рисуется в Compose, поэтому это лишь fallback
+         для системных элементов (splash, фон Activity до первой отрисовки). -->
+    <style name="Theme.AntiSpy" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/ic_launcher_background</item>
+    </style>
+</resources>

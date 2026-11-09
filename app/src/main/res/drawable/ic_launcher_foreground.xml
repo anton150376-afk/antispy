@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Щит (защита) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,24 L78,34 L78,54 C78,68 68,79 54,84 C40,79 30,68 30,54 L30,34 Z" />
+    <!-- Микрофон в центре щита -->
+    <path
+        android:fillColor="#6750A4"
+        android:pathData="M54,42 A5,5 0 1,0 54,52 A5,5 0 1,0 54,42 Z" />
+    <path
+        android:fillColor="#6750A4"
+        android:pathData="M54,56 L58,56 L58,60 C58,62.2 56.2,64 54,64 C51.8,64 50,62.2 50,60 L50,56 L54,56 Z" />
+</vector>
