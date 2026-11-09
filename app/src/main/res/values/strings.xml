@@ -62,6 +62,10 @@
     <string name="nls_events_24h_title">События мониторинга уведомлений</string>
     <string name="nls_subtitle_app">%d приложений через NLS</string>
 
+    <!-- NLS permission request card -->
+    <string name="nls_card_description">Чтобы перехватывать уведомления о записи экрана/аудио, включите доступ к уведомлениям для AntiSpy в настройках устройства.</string>
+    <string name="nls_card_open_settings">Открыть настройки</string>
+
     <!-- Error messages -->
     <string name="error_permission_denied">Доступ запрещён — проверьте настройки разрешения</string>
 </resources>

@@ -53,6 +53,7 @@ import com.anton150376afk.antispy.R
 @Composable
 fun DashboardScreen(
     onSettingsClick: () -> Unit = {},
+    onNlsSettingsClick: () -> Unit = {},
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.state.collectAsState().value
@@ -99,14 +100,21 @@ fun DashboardScreen(
                 AuditRecordCard(viewModel = viewModel, auditResults = uiState.auditResults)
             }
 
-            // Секция 3: события из NotificationListenerService
-            if (uiState.nlsEvents.isNotEmpty()) {
+            // Карточка запроса разрешения NLS
+            if (!uiState.isNlsGranted) {
+                NlsPermissionCard(onOpenSettings = onNlsSettingsClick)
+            }
+
+            // Секция 3: события из NotificationListenerService (только когда NLS уже разрешён)
+            if (uiState.isNlsGranted && uiState.nlsEvents.isNotEmpty()) {
                 NlsEventsCard(events = uiState.nlsEvents)
             }
 
-            // Пустое состояние
-            if (!uiState.isScanning && uiState.activeListeners.isEmpty() && uiState.errorMessage == null) {
-                EmptyStateCard()
+            // Пустое состояние — только если всё проверено и данных нет
+            if (!uiState.isScanning && !uiState.isNlsGranted && uiState.activeListeners.isEmpty() && uiState.errorMessage == null) {
+                EmptyStateCard(
+                    onScanAgain = viewModel::scanAll
+                )
             }
 
             // Кнопка перехода к настройкам
@@ -257,11 +265,45 @@ private fun formatNlsTime(timestamp: Long): String {
 }
 
 // ============================================================
+// Запрос разрешения NLS
+// ============================================================
+
+@Composable
+private fun NlsPermissionCard(onOpenSettings: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Filled.Notifications,
+                    contentDescription = null,
+                    tint = Color(0xFFFFA000),
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.size(8.dp))
+                Text(
+                    stringResource(R.string.nls_card_description),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            Spacer(Modifier.size(8.dp))
+            androidx.compose.material3.TextButton(onClick = onOpenSettings) {
+                Text(stringResource(R.string.nls_card_open_settings), color = Color(0xFF2196F3))
+            }
+        }
+    }
+}
+
+// ============================================================
 // Пустое состояние
 // ============================================================
 
 @Composable
-private fun EmptyStateCard() {
+private fun EmptyStateCard(onScanAgain: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(32.dp).fillMaxWidth(),

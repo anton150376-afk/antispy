@@ -23,7 +23,8 @@ data class DashboardUiState(
     val auditResults: List<AuditEntry> = emptyList(),
     val nlsEvents: List<AppNlsListener.RecordingNotification> = emptyList(),
     val isScanning: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isNlsGranted: Boolean = false
 )
 
 /** Результат сканирования одного приложения */
@@ -101,12 +102,14 @@ class DashboardViewModel @Inject constructor(
                     activeListeners = scanResults,
                     auditResults = auditEntries,
                     nlsEvents = NlsEventLog.getRecentEvents(),
-                    isScanning = false
+                    isScanning = false,
+                    isNlsGranted = NlsEventLog.isEnabled
                 )
             } catch (e: Throwable) {
                 screenState.value = DashboardUiState(
                     isScanning = false,
-                    errorMessage = "Ошибка сканирования: ${e.message}"
+                    errorMessage = "Ошибка сканирования: ${e.message}",
+                    isNlsGranted = NlsEventLog.isEnabled
                 )
             }
         }

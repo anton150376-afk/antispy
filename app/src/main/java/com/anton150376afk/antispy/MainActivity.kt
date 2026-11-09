@@ -92,14 +92,21 @@ private fun AntiSpyAppRoot(viewModel: DashboardViewModel = hiltViewModel()) {
 private fun AntiSpyAppScreen(viewModel: DashboardViewModel = hiltViewModel()) {
     val context = LocalContext.current
 
-    // Открываем настройки защиты при клике
+    // Открываем настройки защиты (Usage Stats) при клике
     val onSettingsClick: () -> Unit = {
         Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
             flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
         }.also { context.startActivity(it) }
     }
 
-    DashboardScreen(onSettingsClick = onSettingsClick, viewModel = viewModel)
+    // Открываем настройки доступа к уведомлениям (Notification access) при клике
+    val onNlsSettingsClick: () -> Unit = {
+        Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
+            flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+        }.also { context.startActivity(it) }
+    }
+
+    DashboardScreen(onSettingsClick = onSettingsClick, onNlsSettingsClick = onNlsSettingsClick, viewModel = viewModel)
 }
 
 // ============================================================
