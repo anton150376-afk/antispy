@@ -118,13 +118,14 @@ DashboardScreen
 
 ## 7. Что уже реализовано (не ломать)
 
-- ✅ MicScanEngine: 3 метода — runningAppProcesses, activeMicrophones (API 31+), UsageStats audit.
+- ✅ MicScanEngine: 3 метода — runningAppProcesses, getActiveRecordingConfigurations (API 24+), UsageStats audit.
 - ✅ MicMonitoringService: ForegroundService с уведомлением, скан каждые 3 сек.
 - ✅ UsageStatsAuditor: auditLastHours + getAppUsageEvents.
 - ✅ Dashboard: ViewModel + Compose-экран со списками.
 - ✅ Hilt DI (AntSpyApp + @HiltViewModel).
 - ✅ Ресурсы: тема, иконка, strings.xml, правила бэкапа.
 - ✅ Каждый data class в отдельном файле (стандарт бойлера).
+- ✅ Gradle wrapper настроен, проект собирается (`gradlew.bat assembleDebug`).
 
 ## 8. Известные проблемы и следующие задачи (делай по порядку)
 
@@ -149,12 +150,13 @@ DashboardScreen
 **Что сделать:** заменить хардкод на `context.getString(R.string.xxx)` (в Composable — `stringResource(R.string.xxx)`).
 **Как проверить:** собрать проект, убедиться что строки отображаются корректно.
 
-### Задача 4. Настроить gradle wrapper
-**Проблема:** в проекте нет `gradlew.bat` и `gradle\wrapper\`. Сборка из README (`./gradlew assembleDebug`) не сработает.
-**Что сделать:** сгенерировать wrapper. Варианты:
-- Открыть проект в Android Studio (File → Open) — студия предложит настроить Gradle; или
-- Установить Gradle CLI и выполнить `gradle wrapper --gradle-version 8.9`.
-**Как проверить:** после настройки `gradlew.bat assembleDebug` должен запуститься.
+### Задача 4. Убрать deprecated-предупреждения (МЕЛКАЯ)
+**Проблема:** при сборке выводятся 3 предупреждения. Это не ошибки, но лучше почистить:
+- `MainActivity.kt:57` — `getRunningServices()` помечен deprecated.
+- `UsageStatsAuditor.kt:100-101` — `MOVE_TO_FOREGROUND` / `MOVE_TO_BACKGROUND` deprecated.
+- `DashboardScreen.kt:281` — `Divider` переименован в `HorizontalDivider`.
+**Что сделать:** заменить `Divider()` → `HorizontalDivider()`. Остальные два можно оставить (нет простой альтернативы) либо подавить аннотацией `@Suppress("DEPRECATION")` — уточни у владельца.
+**Как проверить:** пересобрать — предупреждений должно стать меньше.
 
 ### Задача 5. (дальше по роадмапу)
 Когда задачи 1–4 готовы, переходи к функциональным улучшениям из README, раздел «Roadmap»:
@@ -164,20 +166,21 @@ DashboardScreen
 
 ## 9. Как собирать и проверять проект
 
-> ⚠️ Сейчас gradle wrapper НЕ настроен (см. Задачу 4). До этого сборка из командной строки не заработает.
+Gradle wrapper уже настроен (`gradlew.bat` в корне проекта). Сборка работает.
 
 ```powershell
 # перейти в каталог проекта
 cd C:\Users\user\Desktop\boilerplate-public\notes\antispy
 
-# сборка debug-версии (после настройки wrapper)
+# сборка debug-версии
 .\gradlew.bat assembleDebug
 
 # установить на подключённое устройство
 .\gradlew.bat installDebug
 ```
 
-Для проверки синтаксиса без полной сборки (если wrapper не готов) — перечитывай файл глазами: проверь скобки, импорты, соответствие типов.
+> ⚠️ Первая сборка может занять 3–5 минут (скачивание зависимостей). Далее быстрее.
+> Сборку запускай в фоне и жди уведомления о завершении — не опрашивай файл лога в цикле.
 
 ## 10. Git-правила
 
