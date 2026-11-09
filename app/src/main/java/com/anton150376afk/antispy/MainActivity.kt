@@ -29,6 +29,13 @@ import com.anton150376afk.antispy.ui.dashboard.DashboardViewModel
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    // Запрашиваем RECORD_AUDIO (runtime permission на Android 10+)
+    private val recordAudioLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) startMicMonitoring() else showError("Требуется разрешение RECORD AUDIO")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,13 +45,6 @@ class MainActivity : ComponentActivity() {
             ActivityResultContracts.RequestPermission()
         ) { granted ->
             if (granted) requestAudioPermissionsAndStart()
-        }
-
-        // Запрашиваем RECORD_AUDIO (runtime permission на Android 10+)
-        val recordAudioLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { granted ->
-            if (granted) startMicMonitoring() else showError("Требуется разрешение RECORD AUDIO")
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -98,6 +98,7 @@ class MainActivity : ComponentActivity() {
     /** Показать ошибку при отказе от разрешения */
     private fun showError(message: String) {
         android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show()
+    }
 
     /** Проверка запущен ли наш foreground-сервис (по наличию уведомления) */
     @Suppress("DEPRECATION")
