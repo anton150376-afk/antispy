@@ -5,11 +5,14 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.anton150376afk.antispy.MainActivity
+import com.anton150376afk.antispy.R
 import com.anton150376afk.antispy.core.MicScanEngine
 
 /**
@@ -41,6 +44,9 @@ class MicMonitoringService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        // Создаём notification channel (Android 8+ required)
+        createNotificationChannel(this)
+
         // Запускаем foreground service с постоянным уведомлением
         val notification = buildForegroundNotification()
         startForeground(NOTIFICATION_ID, notification)
@@ -115,6 +121,22 @@ class MicMonitoringService : Service() {
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
+    }
+
+    /** Создаёт notification channel для ForegroundService (Android 8.0+). */
+    private fun createNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        val name = context.getString(R.string.antispy_notification_channel_name)
+        val descriptionText = context.getString(R.string.antispy_notification_channel_desc)
+        val importance = NotificationManagerCompat.IMPORTANCE_LOW
+        val channel = android.app.NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+            setShowBadge(false)
+        }
+
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.createNotificationChannel(channel)
     }
 
     companion object {
